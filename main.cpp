@@ -159,43 +159,64 @@ int main() {
             }
         }
     }
-
-    // =========================
-    // FIM DO BLOCO DEV B
-    // =========================
-
-
-    // =========================
-    // BLOCO DEV C - Abastecimento, relatórios e status geral
-    // =========================
-    //
-    // Caso a opcao seja 3 (Abastecer):
-    //   - Calcular o espaço livre no tanque
-    //   - Solicitar quantos litros o usuário deseja abastecer
-    //   - Atualizar currentFuelL e totalRefuelCost
-    //   - Exibir um resumo da operação
-    //
-    // Caso a opcao seja 6 (Mostrar status):
-    //   - Calcular L/100km e autonomia atual
-    //   - Calcular alcance atual e porcentagem do tanque
-    //   - Exibir status geral:
-    //       velocidade, autonomia, tanque, totalKm, custo e temperatura
-    //
-    // Caso a opcao seja 8 (Relatório completo):
-    //   - Mostrar resumo consolidado:
-    //       Total percorrido
-    //       Capacidade do tanque atual e total
-    //       Custo total de abastecimento
-    //       Tipo e preco do combustivel
-    //       Velocidade base e alvo
-    //       Temperatura do motor (se ativo)
-    //       Distancia planejada (se houver)
-    //
-    // =========================
-    // FIM DO BLOCO DEV C
-    // =========================
+// ========================= 
+// FIM DO BLOCO DEV B 
+// ========================= 
 
 
+// ========================= 
+// BLOCO 3 - DEV C 
+// ========================= 
+// (Responsável: abastecimento, relatórios e status geral)
+// Abastecer
+if (option == 3) {
+    double fuelToAdd;
+    double freeSpace = tankCapacityL - currentFuelL;
+    cout << "Espaco disponivel: " << freeSpace << " L\nQuantos litros deseja abastecer? ";
+    cin >> fuelToAdd;
+    if (fuelToAdd > freeSpace) fuelToAdd = freeSpace;
+    currentFuelL += fuelToAdd;
+    double cost = fuelToAdd * fuelPrice;
+    totalRefuelCost += cost;
+    cout << "Abastecido: " << fuelToAdd << " L | Custo: R$ " << cost << endl;
+}
+
+// Mostrar status
+if (option == 6) {
+    double percentage = currentFuelL / tankCapacityL * 100.0;
+    double currentRange = currentFuelL * effectiveAutonomyKmL;
+    cout << "\n--- STATUS DO VEICULO ---\n";
+    cout << "Velocidade: " << targetSpeedKmH << " km/h\n";
+    cout << "Autonomia efetiva: " << effectiveAutonomyKmL << " km/L\n";
+    cout << "Tanque: " << currentFuelL << " L (" << percentage << "%)\n";
+    cout << "Alcance atual: " << currentRange << " km\n";
+    cout << "KM total: " << totalKm << " km\n";
+    cout << "Custo total abastecido: R$ " << totalRefuelCost << "\n";
+    cout << "Temperatura do motor: " << engineTempC << " C\n";
+}
+
+// Relatório completo
+if (option == 8) {
+    cout << "\n=== RELATORIO COMPLETO ===\n";
+    cout << "KM total: " << totalKm << " km\n";
+    cout << "Combustivel atual: " << currentFuelL << " L de " << tankCapacityL << " L\n";
+    cout << "Custo total abastecimento: R$ " << totalRefuelCost << "\n";
+    cout << "Tipo de combustivel: ";
+    if (fuelType == 1) cout << "Gasolina";
+    else if (fuelType == 2) cout << "Etanol";
+    else if (fuelType == 3) cout << "Diesel";
+    else cout << "Desconhecido";
+    cout << "\nPreco por litro: R$ " << fuelPrice << "\n";
+    cout << "Velocidade alvo: " << targetSpeedKmH << " km/h (base: " << baseSpeed << " km/h)\n";
+    if (useTemperature)
+        cout << "Temperatura atual: " << engineTempC << " C\n";
+    if (totalKm > 0)
+        cout << "Distancia planejada: " << totalKm << " km\n";
+    cout << "============================\n";
+}
+// =========================
+// FIM DO BLOCO DEV C
+// ========================
     // =========================
     // BLOCO DEV D - Ajustes e recursos complementares
     // =========================
