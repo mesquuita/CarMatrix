@@ -4,101 +4,101 @@
 using namespace std;
 
 // =========================
-// BLOCO DEV A - Initialization and configuration
+// BLOCO DEV A - Inicialização e configuração
 // =========================
 
 int main() {
-    cout << "=== ONBOARD COMPUTER ===" << endl;
+    cout << "=== COMPUTADOR DE BORDO ===" << endl;
 
-    // Initial flags and settings
-    int useTemperature = 1;      // 1 = yes / 0 = no
-    int useBluetoothSim = 0;     // Bluetooth simulation
+    // Flags e configurações iniciais
+    int useTemperature = 1;      // 1 = sim / 0 = nao
+    int useBluetoothSim = 0;     // simulação Bluetooth
     float baseSpeed = 80.0;      // km/h
-    float incrementL100 = 0.5;   // L/100km for every +5 km/h above base
+    float incrementL100 = 0.5;   // L/100km a cada +5 km/h acima da base
     float safetyMarginPct = 15.0; // %
 
-    // Bluetooth simulation
-    cout << "Connect via Bluetooth? (1=yes / 0=no): ";
+    // Simulação de conexão Bluetooth
+    cout << "Deseja conectar via Bluetooth? (1=sim / 0=nao): ";
     cin >> useBluetoothSim;
-    cout << (useBluetoothSim ? "Bluetooth connected successfully." : "Bluetooth not connected.") << endl;
+    cout << (useBluetoothSim ? "Bluetooth conectado com sucesso." : "Bluetooth nao conectado.") << endl;
 
-    // Vehicle data
+    // Dados do veículo
     float tankCapacityL = 0.0, baseAutonomyKmL = 0.0;
-    cout << "Tank capacity (liters): ";
+    cout << "Capacidade do tanque (litros): ";
     cin >> tankCapacityL;
-    cout << "Average base autonomy (km/L): ";
+    cout << "Autonomia media base (km/L): ";
     cin >> baseAutonomyKmL;
 
-    // Fuel type and price
+    // Tipo e preço do combustível
     int fuelType = 0;
     float fuelPrice = 0.0;
-    cout << "Fuel type (1=gasoline, 2=ethanol, 3=diesel): ";
+    cout << "Tipo de combustivel (1=gasolina, 2=etanol, 3=diesel): ";
     cin >> fuelType;
-    cout << "Fuel price (R$/L): ";
+    cout << "Preco do combustivel (R$/L): ";
     cin >> fuelPrice;
 
-    // Current fuel level
+    // Nível atual de combustível
     int readMode = 0;
     float currentFuelL = 0.0;
-    cout << "Fuel reading mode (1=liters / 2=percentage): ";
+    cout << "Modo de leitura do combustivel (1=litros / 2=porcentagem): ";
     cin >> readMode;
 
     if (readMode == 1) {
-        cout << "Enter current fuel amount (L): ";
+        cout << "Informe quantidade atual de combustivel (L): ";
         cin >> currentFuelL;
     } else {
         float percentage = 0.0;
-        cout << "Enter current tank percentage (0 to 100%): ";
+        cout << "Informe porcentagem atual do tanque (0 a 100%): ";
         cin >> percentage;
         currentFuelL = (percentage / 100.0f) * tankCapacityL;
     }
 
     if (currentFuelL > tankCapacityL) currentFuelL = tankCapacityL;
 
-    // Initialize main variables
+    // Inicializar variáveis principais
     float totalKm = 0.0;
     float totalRefuelCost = 0.0;
 
-    // Target average speed
+    // Velocidade média alvo
     float targetSpeedKmH = 0.0;
-    cout << "Enter target average speed (km/h): ";
+    cout << "Informe a velocidade media alvo (km/h): ";
     cin >> targetSpeedKmH;
     if (targetSpeedKmH <= 0) targetSpeedKmH = baseSpeed;
 
-    // Engine temperature
+    // Temperatura do motor
     float engineTempC = 90.0;
 
-    // Initial help message
-    cout << "Press 9 in the main menu for help during system use." << endl;
+    // Mensagem inicial
+    cout << "Pressione 9 no menu principal para ajuda durante o uso do sistema." << endl;
 
 
     // =========================
-    // BLOCO DEV B - Menu control and driving logic
+    // BLOCO DEV B - Controle do menu e regras de direção
     // =========================
 
     int option = -1;
     cout << fixed << setprecision(2);
 
     while (option != 0) {
-        cout << "\n=== MAIN MENU ===\n";
-        cout << "1 - Trip planning\n2 - Drive section\n9 - Help\n0 - Exit\nChoose an option: ";
+        cout << "\n=== MENU PRINCIPAL ===\n";
+        cout << "1 - Planejamento de viagem\n2 - Dirigir trecho\n9 - Ajuda\n0 - Sair\nEscolha uma opcao: ";
         cin >> option;
 
-        // Help menu
+        // Menu de ajuda
         if (option == 9) {
-            cout << "\n--- HELP ---\n";
-            cout << "Use this system to plan trips, drive sections, refuel, and monitor the vehicle.\n";
-            cout << "Each option updates the onboard computer data.\n";
+            cout << "\n--- AJUDA ---\n";
+            cout << "Use este sistema para planejar viagens, dirigir trechos, abastecer e acompanhar o status do veiculo.\n";
+            cout << "Cada opcao atualiza as informacoes do computador de bordo.\n";
             continue;
         }
 
-        // Exit
+        // Sair do sistema
         if (option == 0) {
-            cout << "\nExiting system...\n";
+            cout << "\nEncerrando sistema...\n";
             break;
         }
 
-        // Consumption rules
+        // Regras de consumo
         float l100_base = 100.0f / baseAutonomyKmL;
         float speedExcess = targetSpeedKmH - baseSpeed;
         if (speedExcess < 0) speedExcess = 0;
@@ -107,10 +107,10 @@ int main() {
         float l100_final = l100_base + l100_extra;
         float effectiveAutonomyKmL = 100.0f / l100_final;
 
-        // Option 1 - Trip planning
+        // Opcao 1 - Planejamento de viagem
         if (option == 1) {
             float tripDistanceKm;
-            cout << "Total trip distance (km): ";
+            cout << "Distancia total da viagem (km): ";
             cin >> tripDistanceKm;
 
             float estimatedTimeH = tripDistanceKm / targetSpeedKmH;
@@ -121,26 +121,26 @@ int main() {
             int stops = static_cast<int>(ceil(tripDistanceKm / usableRange)) - 1;
             if (stops < 0) stops = 0;
 
-            cout << "\n--- TRIP PLAN ---\n";
-            cout << "Estimated time: " << estimatedTimeH * 60 << " minutes\n";
-            cout << "Fuel required: " << fuelNeeded << " L\n";
-            cout << "Estimated cost: R$ " << estimatedCost << "\n";
-            cout << "Expected stops: " << stops << "\n";
+            cout << "\n--- PLANO DE VIAGEM ---\n";
+            cout << "Tempo estimado: " << estimatedTimeH * 60 << " minutos\n";
+            cout << "Combustivel necessario: " << fuelNeeded << " L\n";
+            cout << "Custo estimado: R$ " << estimatedCost << "\n";
+            cout << "Paradas previstas: " << stops << "\n";
         }
 
-        // Option 2 - Drive section
+        // Opcao 2 - Dirigir trecho
         if (option == 2) {
             float sectionKm;
-            cout << "Distance driven (km): ";
+            cout << "Distancia percorrida (km): ";
             cin >> sectionKm;
 
             if (targetSpeedKmH > 120)
-                cout << "Warning: Speed above 120 km/h!\n";
+                cout << "Aviso: Velocidade acima de 120 km/h!\n";
 
             float fuelUsed = sectionKm / effectiveAutonomyKmL;
 
             if (fuelUsed > currentFuelL) {
-                cout << "Error: Not enough fuel.\n";
+                cout << "Erro: Combustivel insuficiente.\n";
             } else {
                 currentFuelL -= fuelUsed;
                 totalKm += sectionKm;
@@ -148,83 +148,83 @@ int main() {
                 if (useTemperature) {
                     engineTempC += sectionKm * 0.02;
                     if (engineTempC > 100.0)
-                        cout << "Warning: Engine temperature above 100°C!\n";
+                        cout << "Alerta: Temperatura do motor acima de 100°C!\n";
                 }
 
-                cout << "\n--- SECTION COMPLETE ---\n";
-                cout << "Section: " << sectionKm << " km\n";
-                cout << "Remaining fuel: " << currentFuelL << " L\n";
-                cout << "Total KM: " << totalKm << " km\n";
-                cout << "Engine temperature: " << engineTempC << " °C\n";
+                cout << "\n--- TRECHO CONCLUIDO ---\n";
+                cout << "Trecho: " << sectionKm << " km\n";
+                cout << "Combustivel restante: " << currentFuelL << " L\n";
+                cout << "Total rodado: " << totalKm << " km\n";
+                cout << "Temperatura do motor: " << engineTempC << " °C\n";
             }
         }
     }
 
     // =========================
-    // END OF BLOCK DEV B
+    // FIM DO BLOCO DEV B
     // =========================
 
 
     // =========================
-    // BLOCK DEV C - Refueling, reports, and general status
+    // BLOCO DEV C - Abastecimento, relatórios e status geral
     // =========================
     //
-    // Option 3 (Refuel):
-    //   - Calculate free space in the tank
-    //   - Ask how many liters to refuel
-    //   - Update currentFuelL and totalRefuelCost
-    //   - Show refueling summary
+    // Caso a opcao seja 3 (Abastecer):
+    //   - Calcular o espaço livre no tanque
+    //   - Solicitar quantos litros o usuário deseja abastecer
+    //   - Atualizar currentFuelL e totalRefuelCost
+    //   - Exibir um resumo da operação
     //
-    // Option 6 (Show status):
-    //   - Calculate L/100km and current autonomy
-    //   - Calculate current range and tank percentage
-    //   - Display:
-    //       speed, autonomy, tank, totalKm, cost, and temperature
+    // Caso a opcao seja 6 (Mostrar status):
+    //   - Calcular L/100km e autonomia atual
+    //   - Calcular alcance atual e porcentagem do tanque
+    //   - Exibir status geral:
+    //       velocidade, autonomia, tanque, totalKm, custo e temperatura
     //
-    // Option 8 (Full report):
-    //   - Display consolidated summary:
-    //       Total KM driven
-    //       Current and total tank capacity
-    //       Total refueling cost
-    //       Fuel type and price
-    //       Target and base speed
-    //       Temperature (if active)
-    //       Planned distance (if available)
+    // Caso a opcao seja 8 (Relatório completo):
+    //   - Mostrar resumo consolidado:
+    //       Total percorrido
+    //       Capacidade do tanque atual e total
+    //       Custo total de abastecimento
+    //       Tipo e preco do combustivel
+    //       Velocidade base e alvo
+    //       Temperatura do motor (se ativo)
+    //       Distancia planejada (se houver)
     //
     // =========================
-    // END OF BLOCK DEV C
+    // FIM DO BLOCO DEV C
     // =========================
 
 
     // =========================
-    // BLOCK DEV D - Adjustments and complementary features
+    // BLOCO DEV D - Ajustes e recursos complementares
     // =========================
     //
-    // Option 4 (Adjust speed):
-    //   - Display current speed
-    //   - Ask for new speed
-    //   - If <= 0 → reset to base (80 km/h)
-    //   - If > 120 → warning
-    //   - Save new value for future consumption calculations
+    // Caso a opcao seja 4 (Ajustar velocidade):
+    //   - Mostrar a velocidade atual
+    //   - Solicitar nova velocidade
+    //   - Se <= 0 → redefinir para a base (80 km/h)
+    //   - Se > 120 → exibir alerta
+    //   - Salvar novo valor para cálculos de consumo
     //
-    // Option 5 (Engine temperature):
-    //   - Display current temperature
-    //   - Ask if user wants to update manually
-    //   - If yes → ask for new value
-    //   - If > 100°C → warning
-    //   - Else → display "normal"
+    // Caso a opcao seja 5 (Temperatura do motor):
+    //   - Mostrar temperatura atual
+    //   - Perguntar se deseja atualizar manualmente
+    //   - Se sim → ler novo valor
+    //   - Se > 100°C → alerta
+    //   - Caso contrário → exibir "normal"
     //
-    // Option 7 (Program stops):
-    //   - Ask total trip distance
-    //   - Calculate max and usable range (with safety margin)
-    //   - Compute necessary stops = ceil(distance / usableRange) - 1
-    //   - Show recommended number and interval of stops
+    // Caso a opcao seja 7 (Programar paradas):
+    //   - Solicitar distância total da viagem
+    //   - Calcular alcance máximo e útil (com margem de segurança)
+    //   - Calcular número de paradas = ceil(distancia / alcanceUtil) - 1
+    //   - Exibir quantidade e intervalo recomendados de paradas
     //
-    // After completing all operations, user can return to the menu
-    // until selecting “0” to end the program.
+    // Após concluir todas as operações, o usuário pode retornar ao menu
+    // até selecionar “0” para encerrar o programa.
     //
     // =========================
-    // END OF BLOCK DEV D
+    // FIM DO BLOCO DEV D
     // =========================
 
     return 0;
