@@ -1,48 +1,77 @@
-// =========================
-// BLOCO 1 - DEV A
-// =========================
-// (Responsável: Inicialização e configuração do sistema)
+#include <iostream>
+#include <cmath>
 
-// Exibir título e introdução do computador de bordo
+int main() {
+    using namespace std;
 
-// Definir flags e configurações iniciais:
-//   - usarTemperatura (1 = sim / 0 = não)
-//   - usarBluetoothSim (simulação)
-//   - velocidadeBase = 80 km/h
-//   - incrementoL100 = +0,5L/100km a cada +5km/h
-//   - margemSegurancaPct = 15%
+    // =========================
+    // BLOCO DEV A - Inicialização e configuração
+    // =========================
 
-// Simular conexão Bluetooth
-//   - Perguntar se deseja conectar
-//   - Exibir mensagem correspondente
+    cout << "=== COMPUTADOR DE BORDO ===" << endl;
 
-// Solicitar dados do veículo:
-//   - Capacidade do tanque (L)
-//   - Autonomia média base (km/L)
+    // Flags e configurações iniciais
+    int usarTemperatura = 1;   // 1 = sim / 0 = nao
+    int usarBluetoothSim = 0;  // simulação Bluetooth
+    float velocidadeBase = 80.0;       // km/h
+    float incrementoL100 = 0.5;        // L/100km a cada +5 km/h acima da base
+    float margemSegurancaPct = 15.0;   // %
 
-// Solicitar tipo e preço do combustível:
-//   - Tipo (1=gasolina, 2=etanol, 3=diesel)
-//   - Preço (R$/L)
+    // Simulação de conexão Bluetooth
+    cout << "Deseja conectar via Bluetooth? (1=sim / 0=nao): ";
+    cin >> usarBluetoothSim;
+    cout << (usarBluetoothSim ? "Bluetooth conectado com sucesso." : "Bluetooth nao conectado.") << endl;
 
-// Solicitar nível atual de combustível:
-//   - Escolher modo de leitura (1=L / 2=%)
-//   - Converter para litros
-//   - Garantir que não ultrapasse capacidade
+    // Dados do veículo
+    float tanqueCapacidadeL = 0.0, autonomiaBaseKmL = 0.0;
+    cout << "Capacidade do tanque (litros): ";
+    cin >> tanqueCapacidadeL;
+    cout << "Autonomia media base (km/L): ";
+    cin >> autonomiaBaseKmL;
 
-// Inicializar variáveis principais:
-//   - kmTotal = 0
-//   - custoTotalAbastecimento = 0
+    // Tipo e preço do combustível
+    int tipoCombustivel = 0;
+    float precoCombustivel = 0.0;
+    cout << "Tipo de combustivel (1=gasolina, 2=etanol, 3=diesel): ";
+    cin >> tipoCombustivel;
+    cout << "Preco do combustivel (R$/L): ";
+    cin >> precoCombustivel;
 
-// Perguntar se o usuário deseja planejar uma viagem
-//   - Se sim, pedir distância planejada (km)
+    // Nível atual de combustível
+    int modoLeitura = 0;
+    float combustivelAtualL = 0.0;
+    cout << "Modo de leitura do combustivel (1=litros / 2=porcentagem): ";
+    cin >> modoLeitura;
 
-// Solicitar velocidade média alvo
-//   - Usar padrão 80 se não informado
-//   - Guardar em velocidadeAlvoKmH
+    if (modoLeitura == 1) {
+        cout << "Informe quantidade atual de combustivel (L): ";
+        cin >> combustivelAtualL;
+    } else {
+        float porcentagem = 0.0;
+        cout << "Informe porcentagem atual do tanque (0 a 100%): ";
+        cin >> porcentagem;
+        combustivelAtualL = (porcentagem / 100.0) * tanqueCapacidadeL;
+    }
+    if (combustivelAtualL > tanqueCapacidadeL) combustivelAtualL = tanqueCapacidadeL;
 
-// Inicializar temperatura do motor (ex: 90°C)
-// Exibir mensagem com opção de ajuda (tecla 9)
+    // Inicializar variáveis principais
+    float kmTotal = 0.0;
+    float custoTotalAbastecimento = 0.0;
 
+    // Velocidade média alvo
+    float velocidadeAlvoKmH = 0.0;
+    cout << "Informe a velocidade media alvo (km/h): ";
+    cin >> velocidadeAlvoKmH;
+    if (velocidadeAlvoKmH <= 0) velocidadeAlvoKmH = velocidadeBase;
+
+    // Temperatura do motor
+    float temperaturaMotorC = 90.0;
+
+    // Mensagem inicial de ajuda
+    cout << "Pressione 9 no menu principal para ajuda durante o uso do sistema." << endl;
+
+    return 0;
+}
 // =========================
 // FIM DO BLOCO DEV A
 // =========================
