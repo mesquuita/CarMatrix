@@ -88,7 +88,4 @@ g++ teste.cpp -o teste
 
 ## Autor
 
-* Desenvolvido por [Seu Nome] como projeto de estudo/treinamento em C++.
-
-```
-```
+* Desenvolvido por [CarMatrix] como projeto de estudo/treinamento em C++.
