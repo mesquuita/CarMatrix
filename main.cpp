@@ -58,6 +58,7 @@ int main() {
     // Inicializar variáveis principais
     float totalKm = 0.0;
     float totalRefuelCost = 0.0;
+    float tripDistanceKm = 0.0;
 
     // Velocidade média alvo
     float targetSpeedKmH = 0.0;
@@ -76,12 +77,14 @@ int main() {
     // =========================
 
     int option = -1;
-    float effectiveAutonomyKmL = 100.0f / (100.0f / baseAutonomyKmL); // inicializar antes do loop
+    float effectiveAutonomyKmL = 100.0f / (100.0f / baseAutonomyKmL);
     cout << fixed << setprecision(2);
 
     while (option != 0) {
         cout << "\n=== MENU PRINCIPAL ===\n";
-        cout << "1 - Planejamento de viagem\n2 - Dirigir trecho\n3 - Abastecer\n6 - Mostrar status\n8 - Relatorio completo\n9 - Ajuda\n0 - Sair\nEscolha uma opcao: ";
+        cout << "1 - Planejar viagem\n2 - Dirigir trecho\n3 - Abastecer\n4 - Ajustar velocidade\n";
+        cout << "5 - Temperatura do motor\n6 - Mostrar status\n7 - Programar paradas\n";
+        cout << "8 - Relatorio completo\n9 - Ajuda\n0 - Sair\nEscolha uma opcao: ";
         cin >> option;
 
         // Menu de ajuda
@@ -107,9 +110,12 @@ int main() {
         float l100_final = l100_base + l100_extra;
         effectiveAutonomyKmL = 100.0f / l100_final;
 
-        // Opcao 1 - Planejamento de viagem
+        // =========================
+        // BLOCO DEV B - Opções principais
+        // =========================
+
+        // Planejar viagem
         if (option == 1) {
-            float tripDistanceKm;
             cout << "Distancia total da viagem (km): ";
             cin >> tripDistanceKm;
 
@@ -128,7 +134,7 @@ int main() {
             cout << "Paradas previstas: " << stops << "\n";
         }
 
-        // Opcao 2 - Dirigir trecho
+        // Dirigir trecho
         if (option == 2) {
             float sectionKm;
             cout << "Distancia percorrida (km): ";
@@ -163,7 +169,6 @@ int main() {
         // BLOCO DEV C - Abastecimento, relatórios e status geral
         // =========================
 
-        // Abastecer
         if (option == 3) {
             float fuelToAdd;
             float freeSpace = tankCapacityL - currentFuelL;
@@ -176,7 +181,6 @@ int main() {
             cout << "Abastecido: " << fuelToAdd << " L | Custo: R$ " << cost << endl;
         }
 
-        // Mostrar status
         if (option == 6) {
             float percentage = currentFuelL / tankCapacityL * 100.0f;
             float currentRange = currentFuelL * effectiveAutonomyKmL;
@@ -190,7 +194,6 @@ int main() {
             cout << "Temperatura do motor: " << engineTempC << " C\n";
         }
 
-        // Relatório completo
         if (option == 8) {
             cout << "\n=== RELATORIO COMPLETO ===\n";
             cout << "KM total: " << totalKm << " km\n";
@@ -205,46 +208,63 @@ int main() {
             cout << "Velocidade alvo: " << targetSpeedKmH << " km/h (base: " << baseSpeed << " km/h)\n";
             if (useTemperature)
                 cout << "Temperatura atual: " << engineTempC << " C\n";
+            if (tripDistanceKm > 0)
+                cout << "Distancia planejada: " << tripDistanceKm << " km\n";
             cout << "============================\n";
         }
 
         // =========================
-        // FIM BLOCO DEV C
+        // BLOCO DEV D - Ajustes e recursos complementares
         // =========================
+
+        // Ajustar velocidade
+        if (option == 4) {
+            cout << "Velocidade atual: " << targetSpeedKmH << " km/h\nNova velocidade: ";
+            cin >> targetSpeedKmH;
+            if (targetSpeedKmH <= 0) {
+                targetSpeedKmH = baseSpeed;
+                cout << "Velocidade redefinida para base: " << baseSpeed << " km/h\n";
+            }
+            if (targetSpeedKmH > 120) {
+                cout << "Alerta: Velocidade acima de 120 km/h!\n";
+            }
+        }
+
+        // Temperatura do motor
+        if (option == 5) {
+            cout << "Temperatura atual: " << engineTempC << " C\nDeseja atualizar manualmente? (1=sim / 0=nao): ";
+            int change;
+            cin >> change;
+            if (change == 1) {
+                cout << "Nova temperatura: ";
+                cin >> engineTempC;
+                cout << (engineTempC > 100.0 ? "Alerta: Temperatura acima de 100°C!" : "Temperatura normal.") << endl;
+            }
+        }
+
+        // Programar paradas
+        if (option == 7) {
+            float totalDistance = 0.0;
+            cout << "Distancia total da viagem (km): ";
+            cin >> totalDistance;
+
+            float maxRange = tankCapacityL * effectiveAutonomyKmL;
+            float usableRange = maxRange * (1 - safetyMarginPct / 100.0);
+            int stops = static_cast<int>(ceil(totalDistance / usableRange)) - 1;
+            if (stops < 0) stops = 0;
+
+            float interval = totalDistance / (stops + 1);
+
+            cout << "\n--- PLANO DE PARADAS ---\n";
+            cout << "Alcance maximo: " << maxRange << " km\n";
+            cout << "Alcance util (com margem de " << safetyMarginPct << "%): " << usableRange << " km\n";
+            cout << "Paradas recomendadas: " << stops << "\n";
+            if (stops > 0)
+                cout << "Intervalo medio entre paradas: " << interval << " km\n";
+            else
+                cout << "Nenhuma parada necessaria para esta viagem.\n";
+        }
     }
 
-
-
-    // =========================
-    // BLOCO DEV D - Ajustes e recursos complementares
-    // =========================
-    //
-    // Caso a opcao seja 4 (Ajustar velocidade):
-    //   - Mostrar a velocidade atual
-    //   - Solicitar nova velocidade
-    //   - Se <= 0 → redefinir para a base (80 km/h)
-    //   - Se > 120 → exibir alerta
-    //   - Salvar novo valor para cálculos de consumo
-    //
-    // Caso a opcao seja 5 (Temperatura do motor):
-    //   - Mostrar temperatura atual
-    //   - Perguntar se deseja atualizar manualmente
-    //   - Se sim → ler novo valor
-    //   - Se > 100°C → alerta
-    //   - Caso contrário → exibir "normal"
-    //
-    // Caso a opcao seja 7 (Programar paradas):
-    //   - Solicitar distância total da viagem
-    //   - Calcular alcance máximo e útil (com margem de segurança)
-    //   - Calcular número de paradas = ceil(distancia / alcanceUtil) - 1
-    //   - Exibir quantidade e intervalo recomendados de paradas
-    //
-    // Após concluir todas as operações, o usuário pode retornar ao menu
-    // até selecionar “0” para encerrar o programa.
-    //
-    // =========================
-    // FIM DO BLOCO DEV D
-    // =========================
     return 0;
 }
-
