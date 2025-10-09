@@ -2,6 +2,7 @@
 # Computador de Bordo - C++
 # Integrantes da Equipe: | Vitor Gabriel Mesquita; 20251112018 | João Ricardo Freitas da Costa Morais; 20251110628 | Airton de Araújo Ricardo Filho; 20251113777 | Félix Luan Lima Buenos ; 20251112597 |Thales Henrique Moreno Amora; 20251114553 | Eric Dimitri Barros Batista; 20251110484 | Pedro correia da cunha;20242110410 | Francisco Leonardo Mariano de Souza; 20251113580 | Brena Herculano Monte |20251112044 |
 # Trello: https://trello.com/b/XD3qFX8B/ignis-venture
+# FLuxograma (MIRO): https://miro.com/welcomeonboard/T3hYTUFHV1lMSHk4WXVsaXBScGhMZEtHMFFvVzFERFl0Wm51Y2tla2FDZERsUk15bzB5SkVyencvL1B5VDVKTVFHbFRtcXlVOHRjZThFcE5HaTdCdmM0aGtvRkZ2NkVGSzJrU0tpMEJKeTZPVUZZdS9PMzd4RzFiWmtoWFdMSTZBd044SHFHaVlWYWk0d3NxeHNmeG9BPT0hdjE=?share_link_id=35380046103
 
 
 Este é um programa em **C++** que simula um **computador de bordo de veículo**, permitindo planejar viagens, monitorar consumo de combustível, controlar velocidade, registrar temperatura do motor e programar paradas.
