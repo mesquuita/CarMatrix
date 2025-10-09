@@ -59,17 +59,22 @@ int main() {
     float totalKm = 0.0;
     float totalRefuelCost = 0.0;
     float tripDistanceKm = 0.0;
-
-    // Velocidade média alvo
     float targetSpeedKmH = 0.0;
+    float engineTempC = 90.0;
+
+    // =========================
+    // NOVAS VARIÁVEIS E CONTADORES
+    // =========================
+    float kmSinceLastRefuel = 0.0;   // Km rodados desde último abastecimento
+    float lastRefuelLiters = 0.0;    // Litros abastecidos na última operação
+    float tripTimeH = 0.0;           // Tempo total de viagem acumulado
+    const float referenceSpeedKmH = 80.0; // Velocidade média de referência
+
+    // Solicitar velocidade alvo
     cout << "Informe a velocidade media alvo (km/h): ";
     cin >> targetSpeedKmH;
     if (targetSpeedKmH <= 0) targetSpeedKmH = baseSpeed;
 
-    // Temperatura do motor
-    float engineTempC = 90.0;
-
-    // Mensagem inicial
     cout << "Pressione 9 no menu principal para ajuda durante o uso do sistema." << endl;
 
     // =========================
@@ -87,21 +92,18 @@ int main() {
         cout << "8 - Relatorio completo\n9 - Ajuda\n0 - Sair\nEscolha uma opcao: ";
         cin >> option;
 
-        // Menu de ajuda
         if (option == 9) {
             cout << "\n--- AJUDA ---\n";
             cout << "Use este sistema para planejar viagens, dirigir trechos, abastecer e acompanhar o status do veiculo.\n";
-            cout << "Cada opcao atualiza as informacoes do computador de bordo.\n";
             continue;
         }
 
-        // Sair do sistema
         if (option == 0) {
             cout << "\nEncerrando sistema...\n";
             break;
         }
 
-        // Regras de consumo
+        // Cálculo de consumo
         float l100_base = 100.0f / baseAutonomyKmL;
         float speedExcess = targetSpeedKmH - baseSpeed;
         if (speedExcess < 0) speedExcess = 0;
@@ -151,6 +153,12 @@ int main() {
                 currentFuelL -= fuelUsed;
                 totalKm += sectionKm;
 
+                // === NOVA LÓGICA ===
+                kmSinceLastRefuel += sectionKm;  // Atualiza km desde último abastecimento
+                tripTimeH += sectionKm / targetSpeedKmH; // Tempo total acumulado
+                float speedMarker = targetSpeedKmH - referenceSpeedKmH;
+                (void)speedMarker; // Apenas para marcar a diferença de velocidade média
+
                 if (useTemperature) {
                     engineTempC += sectionKm * 0.02;
                     if (engineTempC > 100.0)
@@ -178,6 +186,11 @@ int main() {
             currentFuelL += fuelToAdd;
             float cost = fuelToAdd * fuelPrice;
             totalRefuelCost += cost;
+
+            // === NOVA LÓGICA ===
+            lastRefuelLiters = fuelToAdd;
+            kmSinceLastRefuel = 0.0;
+
             cout << "Abastecido: " << fuelToAdd << " L | Custo: R$ " << cost << endl;
         }
 
@@ -192,6 +205,12 @@ int main() {
             cout << "KM total: " << totalKm << " km\n";
             cout << "Custo total abastecido: R$ " << totalRefuelCost << "\n";
             cout << "Temperatura do motor: " << engineTempC << " C\n";
+
+            // === NOVOS DADOS ===
+            cout << "Km desde ultimo abastecimento: " << kmSinceLastRefuel << " km\n";
+            cout << "Ultimo abastecimento: " << lastRefuelLiters << " L\n";
+            cout << "Tempo total de viagem: " << tripTimeH << " horas\n";
+            cout << "Velocidade media de referencia: " << referenceSpeedKmH << " km/h\n";
         }
 
         if (option == 8) {
@@ -217,7 +236,6 @@ int main() {
         // BLOCO DEV D - Ajustes e recursos complementares
         // =========================
 
-        // Ajustar velocidade
         if (option == 4) {
             cout << "Velocidade atual: " << targetSpeedKmH << " km/h\nNova velocidade: ";
             cin >> targetSpeedKmH;
@@ -225,12 +243,10 @@ int main() {
                 targetSpeedKmH = baseSpeed;
                 cout << "Velocidade redefinida para base: " << baseSpeed << " km/h\n";
             }
-            if (targetSpeedKmH > 120) {
+            if (targetSpeedKmH > 120)
                 cout << "Alerta: Velocidade acima de 120 km/h!\n";
-            }
         }
 
-        // Temperatura do motor
         if (option == 5) {
             cout << "Temperatura atual: " << engineTempC << " C\nDeseja atualizar manualmente? (1=sim / 0=nao): ";
             int change;
@@ -242,7 +258,6 @@ int main() {
             }
         }
 
-        // Programar paradas
         if (option == 7) {
             float totalDistance = 0.0;
             cout << "Distancia total da viagem (km): ";
